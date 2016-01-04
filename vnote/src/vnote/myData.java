@@ -48,7 +48,7 @@ public class myData {
 	}
 	//储存文本存储模式
 	@ElementCollection(targetClass=String.class)
-	@CollectionTable(name="contents")
+	@CollectionTable(name="password")
 	@MapKeyColumn(name="keycol")
 	@MapKeyClass(String.class)
 	@Column(name="pwdcol")
@@ -64,7 +64,7 @@ public class myData {
 
 	//储存文本存储模式
 	@ElementCollection(targetClass=Integer.class)
-	@CollectionTable(name="contents")
+	@CollectionTable(name="modtable")
 	@MapKeyColumn(name="keycol")
 	@MapKeyClass(String.class)
 	@Column(name="modcol")

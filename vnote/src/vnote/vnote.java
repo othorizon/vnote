@@ -122,30 +122,40 @@ public class vnote implements Filter {
 			}
 			return;
 		}
-		//添加密码
+		// 添加密码
 		if (id.equals("addpwd")) {
 			String myid = request.getParameter("id").toString();
-			String pwd=request.getParameter("pwd").toString();
-			
-			/* 遇到过一个数据库主键什么的错误，原因在于数据持久化的问题，所以数据库应该把字段设置为不能为空*/
+			String pwd = request.getParameter("pwd").toString();
+
+			/* 遇到过一个数据库主键什么的错误，原因在于数据持久化的问题，所以数据库应该把字段设置为不能为空 */
 			mydata.getPwd().put(myid, pwd);
 			sess.flush();
 			return;
 		}
 		// 验证密码并跳转
 		if (id.equals("pwd")) {
+			String myid = request.getParameter("id").toString();
+			int mod = Integer.parseInt(request.getParameter("mod").toString());
+			String frm = request.getParameter("frm").toString();
 			response.setCharacterEncoding("utf-8");
 
-			// ((HttpServletResponse)
-			// response).sendRedirect("http://www.baidu.com"
-			// );
+			// 如果没有密码.且为切换模式请求、则直接跳转
+			if (((!mydata.getPwd().containsKey(myid) || mydata.getPwd()
+					.get(myid).equals("")) && frm.equals("0"))) {
+				mydata.getMod().put(myid, mod);
+				sess.flush();
+				response.getWriter().write(
+						"<script>self.location.href='" + myid + "'</script>");
+				return;
+			} else {// 如果有密码则输入密码
 
-			request.getRequestDispatcher("/a/password.jsp").forward(request,
-					response);
-			System.out.println(request.getParameter("mod")
-					+ request.getParameter("id"));
+				request.getRequestDispatcher("/a/password.jsp").forward(
+						request, response);
+				System.out.println("pwd" + request.getParameter("pwd")
+						+ request.getParameter("id"));
 
-			return;
+				return;
+			}
 		}
 		if (id.equals("pwd1")) {
 			int mod = Integer.parseInt(request.getParameter("mod").toString());
@@ -154,6 +164,7 @@ public class vnote implements Filter {
 			response.setCharacterEncoding("utf-8");
 
 			if (request.getParameter("pwd") != null
+					&& mydata.getPwd().containsKey(myid)
 					&& request.getParameter("pwd") != ""
 					&& !request.getParameter("pwd").equals(
 							mydata.getPwd().get(myid))) {
@@ -243,14 +254,15 @@ public class vnote implements Filter {
 	private void Ajaxtxt(String usrid, ServletRequest request,
 			ServletResponse response) {
 
-		if (request.getParameter("id") == null)
+		if (request.getParameter("id") == null
+				|| request.getParameter("txt") == null
+				|| request.getParameter("txt").equals(""))
 			return;
+
 		String id = request.getParameter("id").toString();
-		// 如果该页面没有创建则 创建
-		if (!mydata.getContents().containsKey(id)) {
-			mydata.getContents().put(id, "欢迎使用");
-		}
+
 		mydata.getContents().put(id, request.getParameter("txt").toString());
+
 		long date = new Date().getTime();
 		mydata.getEdited().put(usrid, date);
 
@@ -286,8 +298,9 @@ public class vnote implements Filter {
 
 		@Override
 		public void run() {
+
 			sess.flush();
-			System.out.println("flushe end");
+			System.out.println("flush end");
 			try {
 				Thread.sleep(60000);// 1分钟
 			} catch (InterruptedException e) {
@@ -304,7 +317,7 @@ public class vnote implements Filter {
 		sf = conf.buildSessionFactory(serviceRegistry);
 		sess = sf.openSession();
 
-		mydata = (myData) sess.load(myData.class, 1);
+		mydata = (myData) sess.get(myData.class, 1);
 		sessflush = new Thread(robj);
 
 	}

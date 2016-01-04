@@ -207,7 +207,7 @@ body {
 
 		<!--<a href="pwd?mod=0&id=<%=strid%>">编辑模式</a>-->
       <a href="javascript:tobianji()">编辑模式</a>
-
+	  <a href="javascript:mdfpwd()">修改密码</a>
 	</div>
 
 	<div class="stack " style="display: none;" id="help">
@@ -313,8 +313,17 @@ body {
 			frm:0
 		}, function(data, status) {
 		$("#layer3").html(data);
+		});			
+	}
+	function mdfpwd(){
 
-		});	
+		$.post("pwd", {
+			id : $("#myid").val(),
+			mod : 0,
+			frm:1 		
+		}, function(data, status) {
+			$("#layer3").html(data);
+		});
 	}
 </script>
 
