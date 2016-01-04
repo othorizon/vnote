@@ -309,7 +309,8 @@ body {
 	
 		$.post("pwd", {
 			id : $("#myid").val(),
-			mod : 0
+			mod : 0,//请求切换为0模式（编辑模式）
+			frm:0
 		}, function(data, status) {
 		$("#layer3").html(data);
 

@@ -34,6 +34,7 @@ body {
 	font: normal 14px Arial, Helvetica, sans-serif;
 	color: #b7bdc3;
 }
+
 .stack {
 	position: absolute;
 	top: 50px;
@@ -158,7 +159,7 @@ body {
 	<div class="stack ">
 		<div class="layer_1">
 			<div class="layer_2">
-				<div class="layer_3">
+				<div id="layer3" class="layer_3">
 					<textarea id="txt" class="contents " spellcheck="true"></textarea>
 				</div>
 			</div>
@@ -166,23 +167,18 @@ body {
 	</div>
 	<br />
 	<div id="controls">
-	
-		<a href="javascript:AddFavorite()">收藏${param.id}页面</a>
-		
-		<a href="javascript:if($('#help').css('display')=='none') $('#help').show();else $('#help').hide()">帮助与关于</a>
-	<!-- 
-		<span class="bubble_wrapper"
-			onclick="just_clicked_bubble = 'change_url';"> <a href="#"
-			onclick="return false;">change url</a>
-		</span>
-		 -->
+
+		<a href="javascript:AddFavorite()">收藏${param.id}页面</a> <a
+			href="javascript:if($('#help').css('display')=='none') $('#help').show();else $('#help').hide()">帮助与关于</a>
+		<a href="javascript:tobianji()">只写模式</a>
+		<a href="javascript:mdfpwd()">修改密码</a>
 	</div>
-	
+
 	<div class="stack " style="display: none;" id="help">
 		<div class="layer_1">
 			<div class="layer_2">
 				<div class="layer_3">
-					<textarea class="contents " >
+					<textarea class="contents ">
 再次点击页面下方的“帮助与关于”关闭该信息
 =============================				
 该网站为一个记事本，打开网站后会为你随机分配一个url地址，你也可以手动填写一个。			
@@ -270,20 +266,40 @@ body {
 	}
 
 	function AddFavorite(sURL, sTitle) {
-	url=window.location.href;
-	id=$("#myid").val();
-	title="vnote-"+id;
+		url = window.location.href;
+		id = $("#myid").val();
+		title = "vnote-" + id;
 		try {
-			window.external.addFavorite(url,title);
+			window.external.addFavorite(url, title);
 		} catch (e) {
 			try {
-				window.sidebar.addPanel(url,title, "");
+				window.sidebar.addPanel(url, title, "");
 			} catch (e) {
 				alert("请按 Ctrl+D 加入收藏夹");
 			}
 		}
 	}
-	
+	function tobianji() {
+
+		$.post("pwd", {
+			id : $("#myid").val(),
+			mod : 1,
+			frm:0
+		//请求切换为1模式（只写模式）
+		}, function(data, status) {
+			$("#layer3").html(data);
+		});
+	}
+	function mdfpwd(){
+
+		$.post("pwd", {
+			id : $("#myid").val(),
+			mod : 0,
+			frm:1		
+		}, function(data, status) {
+			$("#layer3").html(data);
+		});
+	}
 </script>
 
 </html>
