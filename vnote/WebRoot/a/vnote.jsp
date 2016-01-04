@@ -295,7 +295,7 @@ body {
 		$.post("pwd", {
 			id : $("#myid").val(),
 			mod : 0,
-			frm:1		
+			frm:1 		
 		}, function(data, status) {
 			$("#layer3").html(data);
 		});
