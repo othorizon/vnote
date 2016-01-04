@@ -46,7 +46,37 @@ public class myData {
 	public void setContents(Map<String, String> contents) {
 		this.contents = contents;
 	}
+	//储存文本存储模式
+	@ElementCollection(targetClass=String.class)
+	@CollectionTable(name="contents")
+	@MapKeyColumn(name="keycol")
+	@MapKeyClass(String.class)
+	@Column(name="pwdcol")
+	private Map<String, String> pwd = new HashMap<String, String>();
+	
+	public Map<String, String> getPwd() {
+		return pwd;
+	}
 
+	public void setPwd(Map<String, String> pwd) {
+		this.pwd = pwd;
+	}
+
+	//储存文本存储模式
+	@ElementCollection(targetClass=Integer.class)
+	@CollectionTable(name="contents")
+	@MapKeyColumn(name="keycol")
+	@MapKeyClass(String.class)
+	@Column(name="modcol")
+	private Map<String, Integer> mod = new HashMap<String, Integer>();
+	public Map<String, Integer> getMod() {
+		return mod;
+	}
+
+	public void setMod(Map<String, Integer> mod) {
+		this.mod = mod;
+	}
+	
 	// 储存正在编辑的文本的id
 	@Transient
 	private HashMap<String, Long> edited = new HashMap<String, Long>();
@@ -57,6 +87,8 @@ public class myData {
 	public void setEdited(HashMap<String, Long> edited) {
 		this.edited = edited;
 	}
+	
+
 
 }
 

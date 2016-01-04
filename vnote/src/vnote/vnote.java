@@ -39,7 +39,7 @@ public class vnote implements Filter {
 	 */
 	public vnote() {
 		// TODO Auto-generated constructor stub
-		
+
 	}
 
 	/**
@@ -61,19 +61,19 @@ public class vnote implements Filter {
 		// place your code here
 		String url = ((HttpServletRequest) request).getRequestURL().toString();
 		String id = url.substring(url.lastIndexOf("/") + 1);
-		id=id.toLowerCase();
-		//随机生成网址
-		if(id.equals("")){
-			String str=""; 
-			do{			
-			for(int i=0;i<3;i++){ 
-			 str= str+(char) (Math.random ()*26+'A'); 
-			} 
-			}while(mydata.getContents().containsKey(str));
+		id = id.toLowerCase();
+		// 随机生成网址
+		if (id.equals("")) {
+			String str = "";
+			do {
+				for (int i = 0; i < 3; i++) {
+					str = str + (char) (Math.random() * 26 + 'A');
+				}
+			} while (mydata.getContents().containsKey(str));
 			String contextPath = ((HttpServletRequest) request)
 					.getContextPath();
 			((HttpServletResponse) response).sendRedirect(contextPath + "/"
-					+ str);	
+					+ str);
 			return;
 		}
 		String usrid = "";
@@ -83,10 +83,10 @@ public class vnote implements Filter {
 			chain.doFilter(request, response);
 			return;
 		}
-//		// 编辑状态
-//		if (id.equals("ajaxeditstatus")) {
-//			chain.doFilter(request, response);
-//		}
+		// // 编辑状态
+		// if (id.equals("ajaxeditstatus")) {
+		// chain.doFilter(request, response);
+		// }
 		// 读取服务器文本到客户端
 		if (id.equals("ajaxget")) {
 			Ajaxget(request, response);
@@ -122,6 +122,51 @@ public class vnote implements Filter {
 			}
 			return;
 		}
+		//添加密码
+		if (id.equals("addpwd")) {
+			String myid = request.getParameter("id").toString();
+			String pwd=request.getParameter("pwd").toString();
+			
+			/* 遇到过一个数据库主键什么的错误，原因在于数据持久化的问题，所以数据库应该把字段设置为不能为空*/
+			mydata.getPwd().put(myid, pwd);
+			sess.flush();
+			return;
+		}
+		// 验证密码并跳转
+		if (id.equals("pwd")) {
+			response.setCharacterEncoding("utf-8");
+
+			// ((HttpServletResponse)
+			// response).sendRedirect("http://www.baidu.com"
+			// );
+
+			request.getRequestDispatcher("/a/password.jsp").forward(request,
+					response);
+			System.out.println(request.getParameter("mod")
+					+ request.getParameter("id"));
+
+			return;
+		}
+		if (id.equals("pwd1")) {
+			int mod = Integer.parseInt(request.getParameter("mod").toString());
+			String myid = request.getParameter("id").toString();
+
+			response.setCharacterEncoding("utf-8");
+
+			if (request.getParameter("pwd") != null
+					&& request.getParameter("pwd") != ""
+					&& !request.getParameter("pwd").equals(
+							mydata.getPwd().get(myid))) {
+				response.getWriter().write("false");
+			} else {
+
+				// 切换为模式
+				mydata.getMod().put(myid, mod);
+				sess.flush();
+				response.getWriter().write("true");
+			}
+			return;
+		}
 
 		if (id.indexOf(".") != -1) {
 			// 删除特殊字符
@@ -131,9 +176,43 @@ public class vnote implements Filter {
 					.getContextPath();
 			((HttpServletResponse) response).sendRedirect(contextPath + "/"
 					+ id);
-		} else
-			request.getRequestDispatcher("/a/vnote.jsp?id=" + id).forward(
-					request, response);
+		} else {
+			if (mydata.getMod().containsKey(id)) {
+
+				Integer mod = mydata.getMod().get(id);
+				System.out.println(mod);
+				if (mod == 1) {// 只写模式
+					request.getRequestDispatcher("/a/vnote2.jsp?id=" + id)
+							.forward(request, response);
+					return;
+				}
+			}
+			// 编辑模式
+			// 有密码时
+			if (mydata.getPwd().get(id) != null
+					&& !mydata.getPwd().get(id).equals("")) {
+				System.out.println(request.getParameter("pwd"));
+				if (request.getParameter("pwd") != null) {
+
+					if (request.getParameter("pwd").equals(
+							mydata.getPwd().get(id))) {
+						request.getRequestDispatcher("/a/vnote.jsp?id=" + id)
+								.forward(request, response);
+						return;
+					}
+				}
+				request.getRequestDispatcher(
+						"/a/password.jsp?frm=0&mod=0&id=" + id).forward(
+						request, response);
+				return;
+			} else {
+				request.getRequestDispatcher("/a/vnote.jsp?id=" + id).forward(
+						request, response);
+				return;
+			}
+
+		}
+
 		// pass the request along the filter chain
 
 		// chain.doFilter(request, response);
@@ -142,7 +221,7 @@ public class vnote implements Filter {
 	private void Ajaxget(ServletRequest request, ServletResponse response) {
 
 		// System.out.println("IP"+getIpAddr((HttpServletRequest) request));
-		if(request.getParameter("id")==null)
+		if (request.getParameter("id") == null)
 			return;
 		String id = request.getParameter("id").toString();
 		try {
@@ -156,78 +235,78 @@ public class vnote implements Filter {
 			e.printStackTrace();
 		}
 
-		//更新数据库
+		// 更新数据库
 		updatedatabase();
 
 	}
 
-
 	private void Ajaxtxt(String usrid, ServletRequest request,
 			ServletResponse response) {
-		
-		if(request.getParameter("id")==null)
+
+		if (request.getParameter("id") == null)
 			return;
 		String id = request.getParameter("id").toString();
 		// 如果该页面没有创建则 创建
 		if (!mydata.getContents().containsKey(id)) {
 			mydata.getContents().put(id, "欢迎使用");
 		}
-		mydata.getContents().put(id, request.getParameter("txt").toString());		
+		mydata.getContents().put(id, request.getParameter("txt").toString());
 		long date = new Date().getTime();
 		mydata.getEdited().put(usrid, date);
 
-		//更新数据库
+		// 更新数据库
 		updatedatabase();
 	}
-	void updatedatabase(){
-		//更新数据库
-		if(!sessflush.isAlive()){
+
+	void updatedatabase() {
+		// 更新数据库
+		if (!sessflush.isAlive()) {
 			sessflush.interrupt();
 			try {
 				sessflush.join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			sessflush=new Thread(robj);
-			sessflush.start();			
+			sessflush = new Thread(robj);
+			sessflush.start();
 		}
 	}
+
 	/**
 	 * @see Filter#init(FilterConfig)
 	 */
-	myData mydata=new myData();
+	myData mydata = new myData();
 	Configuration conf;
 	ServiceRegistry serviceRegistry;
 	SessionFactory sf;
 	Session sess;
 	Thread sessflush;
-	
-	Runnable robj=new Runnable() {
-		
+
+	Runnable robj = new Runnable() {
+
 		@Override
 		public void run() {
 			sess.flush();
 			System.out.println("flushe end");
 			try {
-				Thread.sleep(3000);//1分钟
+				Thread.sleep(60000);// 1分钟
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 	};
-	
+
 	public void init(FilterConfig fConfig) throws ServletException {
 		// 持久化数据库
-		 conf = new Configuration().configure();
-		 serviceRegistry = new ServiceRegistryBuilder()
-				.applySettings(conf.getProperties()).buildServiceRegistry();
-		 sf=conf.buildSessionFactory(serviceRegistry);
-		 sess=sf.openSession();
-		 
-		 mydata=(myData) sess.load(myData.class, 1);
-		sessflush=new Thread(robj);
+		conf = new Configuration().configure();
+		serviceRegistry = new ServiceRegistryBuilder().applySettings(
+				conf.getProperties()).buildServiceRegistry();
+		sf = conf.buildSessionFactory(serviceRegistry);
+		sess = sf.openSession();
+
+		mydata = (myData) sess.load(myData.class, 1);
+		sessflush = new Thread(robj);
 
 	}
-	
 
 }
