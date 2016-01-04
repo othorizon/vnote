@@ -122,7 +122,44 @@ public class vnote implements Filter {
 			}
 			return;
 		}
-
+		
+		// 验证密码并跳转
+		if (id.equals("pwd")) {
+			response.setCharacterEncoding("utf-8");	
+	
+//			((HttpServletResponse) response).sendRedirect("http://www.baidu.com"
+//					);
+			
+				request.getRequestDispatcher("/a/password.jsp").forward(
+						request, response);	
+				System.out.println(request.getParameter("mod")+request.getParameter("id"));
+				
+				return;
+		}
+		if (id.equals("pwd1")) {
+			int mod=Integer.parseInt(request.getParameter("mod").toString());
+			response.setCharacterEncoding("utf-8");			
+			if(!request.getParameter("pwd").toString().equals("123")){
+				response.getWriter().write("false");			
+			}else{	
+				
+				if(mod==0){//切换为编辑模式
+					
+				}
+				response.getWriter().write("true");
+			}
+			return;
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		if (id.indexOf(".") != -1) {
 			// 删除特殊字符
 			id = id.replace(".", "");
@@ -209,7 +246,7 @@ public class vnote implements Filter {
 			sess.flush();
 			System.out.println("flushe end");
 			try {
-				Thread.sleep(3000);//1分钟
+				Thread.sleep(60000);//1分钟
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

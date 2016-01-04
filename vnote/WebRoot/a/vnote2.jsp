@@ -34,6 +34,7 @@ body {
 	font: normal 14px Arial, Helvetica, sans-serif;
 	color: #b7bdc3;
 }
+
 .stack {
 	position: absolute;
 	top: 50px;
@@ -110,6 +111,21 @@ body {
 	color: #3a3b3c;
 }
 
+.stack .layer_1 .layer_2 .layer_3 .contents2 {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0 0 0 0;
+	border: 1px solid transparent;
+	background: transparent;
+	resize: none;
+	overflow-y: auto;
+	white-space: pre-wrap;
+	font: normal 15px Arial, Helvetica, sans-serif;
+	line-height: 20px;
+	color: #3a3b3c;
+}
+
 .stack .layer_1 .layer_2 .layer_3 .contents.monospace {
 	font: normal 12px Monaco, 'Courier New', monospace;
 	line-height: 18px;
@@ -155,34 +171,50 @@ body {
 	<input type="hidden" id="myid" value="${param.id}">
 	<br />
 
+
+
 	<div class="stack ">
+
 		<div class="layer_1">
 			<div class="layer_2">
-				<div class="layer_3">
-					<textarea id="txt" class="contents " spellcheck="true"></textarea>
+
+				<div id="layer3" class="layer_3">
+					<div style="height: 20%">
+						<table style="width: 100%;height: 100%">
+							<tr style="width: 100%;height: 100%">
+								<td style="width: 90%;height: 100%"><textarea id="txt2"
+										class="contents2 " spellcheck="true">输入文本...</textarea></td>
+								<td style="width: 10%;height: 100%;">昵称: <input
+									style="width:55px;" type="text" id="nicheng" value="Guest"><input
+									type="button" style="width: 100%" value="提交" onclick="bindup()"></td>
+							</tr>
+						</table>
+					</div>
+					<div style="height: 80%">
+						<textarea id="txt" class="contents " readonly="readonly"
+							spellcheck="true"></textarea>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<br />
 	<div id="controls">
-	
-		<a href="javascript:AddFavorite()">收藏${param.id}页面</a>
-		
-		<a href="javascript:if($('#help').css('display')=='none') $('#help').show();else $('#help').hide()">帮助与关于</a>
-	<!-- 
-		<span class="bubble_wrapper"
-			onclick="just_clicked_bubble = 'change_url';"> <a href="#"
-			onclick="return false;">change url</a>
-		</span>
-		 -->
+
+		<a href="javascript:AddFavorite()">收藏${param.id}页面</a> <a
+			href="javascript:if($('#help').css('display')=='none') $('#help').show();else $('#help').hide()">帮助与关于</a>
+
+
+		<!--<a href="pwd?mod=0&id=<%=strid%>">编辑模式</a>-->
+      <a href="javascript:tobianji()">编辑模式</a>
+
 	</div>
-	
+
 	<div class="stack " style="display: none;" id="help">
 		<div class="layer_1">
 			<div class="layer_2">
 				<div class="layer_3">
-					<textarea class="contents " >
+					<textarea class="contents ">
 再次点击页面下方的“帮助与关于”关闭该信息
 =============================				
 该网站为一个记事本，打开网站后会为你随机分配一个url地址，你也可以手动填写一个。			
@@ -212,52 +244,30 @@ body {
 	$(document).ready(function() {
 		//读取文本
 		get();
-		$("#txt").blur(function() {
-			$.post("ajaxloseedit");
-			$("#editstatus").html("<font color=gray>查看中...</font>");
-		});
-		$("#txt").on("click", function() {
-			$("#editstatus").html("<font color=green>编辑中...</font>");
-			if (edit == 0) {
-				$.post("ajaxgetedit", {
-					id : $("#myid").val()
-				}, function(data, status) {
-					if (data == "true") {
-						bindup();
-						edit = 1;
-					} else {
-						$("#tip").html("<font color=red>正在被编辑，不能修改</font>");
-						setTimeout(function() {
-							$("#tip").html("");
-						}, 2000);
-						$("#txt").blur();
-					}
-				});
-			}
-		});
 
+		//杂项
+		others();
 	});
 	var timer = null;
+	// 点击提交按钮提交数据
 	function bindup() {
 
-		//alert($("#myid").val());
+		edit = 1;
+
+		//alert($("#txt2").val());
+		var str = $("#txt2").val() + "\n" + "---------由" + $("#nicheng").val()
+				+ " 添加于" + new Date().toLocaleString() + "-----------"
+				+ "\n\n\n" + $("#txt").val();
 		//绑定数据上传事件
-		$("#txt").on("keyup", function() {
-			$.post("ajaxtxt", {
-				id : $("#myid").val(),
-				txt : $("#txt").val()
-			}, function(data, status) {
-				// alert("Data: " + data + "\nStatus: " + status);
-				//松开按键后放弃编辑权限
-				window.clearInterval(timer);
-				timer = setTimeout(function() {
-					$("#txt").blur();
-					edit = 0;
-					get();
-					$.post("ajaxloseedit");
-				}, 6000)
-			});
+
+		$.post("ajaxtxt", {
+			id : $("#myid").val(),
+			txt : str
+		}, function(data, status) {
+			edit = 0;
+			get();
 		});
+
 	}
 	function get() {
 		$.post("ajaxget", {
@@ -270,20 +280,41 @@ body {
 	}
 
 	function AddFavorite(sURL, sTitle) {
-	url=window.location.href;
-	id=$("#myid").val();
-	title="vnote-"+id;
+		url = window.location.href;
+		id = $("#myid").val();
+		title = "vnote-" + id;
 		try {
-			window.external.addFavorite(url,title);
+			window.external.addFavorite(url, title);
 		} catch (e) {
 			try {
-				window.sidebar.addPanel(url,title, "");
+				window.sidebar.addPanel(url, title, "");
 			} catch (e) {
 				alert("请按 Ctrl+D 加入收藏夹");
 			}
 		}
 	}
+	function others() {
+		$("#txt2").on("click", function() {
+			if ($("#txt2").val() == "输入文本...") {
+				$("#txt2").val("");
+			}
+		});
+		$("#txt2").on("blur", function() {
+			if ($("#txt2").val() == "") {
+				$("#txt2").val("输入文本...");
+			}
+		});
+	}
+	function tobianji(){
 	
+		$.post("pwd", {
+			id : $("#myid").val(),
+			mod : 0
+		}, function(data, status) {
+		$("#layer3").html(data);
+
+		});	
+	}
 </script>
 
 </html>
