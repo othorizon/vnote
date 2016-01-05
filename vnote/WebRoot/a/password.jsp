@@ -21,8 +21,8 @@
 <!--
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
-<script type="text/javascript" src="/vnote/a/jquery-1.9.1.js"></script>
-<script type="text/javascript" src="/a/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="<%=basePath%>a/js/jquery-1.9.1.js"></script>
+
 </head>
 <body>
 	<div>
