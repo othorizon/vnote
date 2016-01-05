@@ -1,13 +1,7 @@
 package vnote;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -17,12 +11,13 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
@@ -47,9 +42,13 @@ public class vnote implements Filter {
 	 */
 	public void destroy() {
 		// TODO Auto-generated method stub
+		//System.out.println("保存数据到数据库");
+		//update();//销毁时无法保存
+		/*
 		sess.flush();
 		sess.clear();
 		sf.close();
+		*/
 	}
 
 	/**
@@ -129,7 +128,7 @@ public class vnote implements Filter {
 
 			/* 遇到过一个数据库主键什么的错误，原因在于数据持久化的问题，所以数据库应该把字段设置为不能为空 */
 			mydata.getPwd().put(myid, pwd);
-			sess.flush();
+			//sess.flush();
 			return;
 		}
 		// 验证密码并跳转
@@ -143,7 +142,7 @@ public class vnote implements Filter {
 			if (((!mydata.getPwd().containsKey(myid) || mydata.getPwd()
 					.get(myid).equals("")) && frm.equals("0"))) {
 				mydata.getMod().put(myid, mod);
-				sess.flush();
+				//sess.flush();
 				response.getWriter().write(
 						"<script>self.location.href='" + myid + "'</script>");
 				return;
@@ -173,12 +172,19 @@ public class vnote implements Filter {
 
 				// 切换为模式
 				mydata.getMod().put(myid, mod);
-				sess.flush();
+				//sess.flush();
 				response.getWriter().write("true");
 			}
 			return;
 		}
+		//备份数据到数据库
+		if (id.equals("backup")) {
+			update(request,response);
+			return;
+		}
 
+		
+		//最后的处理，是页面内容处理
 		if (id.indexOf(".") != -1) {
 			// 删除特殊字符
 			id = id.replace(".", "");
@@ -247,7 +253,7 @@ public class vnote implements Filter {
 		}
 
 		// 更新数据库
-		updatedatabase();
+		//updatedatabase();
 
 	}
 
@@ -267,9 +273,9 @@ public class vnote implements Filter {
 		mydata.getEdited().put(usrid, date);
 
 		// 更新数据库
-		updatedatabase();
+		//updatedatabase();
 	}
-
+/*
 	void updatedatabase() {
 		// 更新数据库
 		if (!sessflush.isAlive()) {
@@ -283,17 +289,17 @@ public class vnote implements Filter {
 			sessflush.start();
 		}
 	}
-
+*/
 	/**
 	 * @see Filter#init(FilterConfig)
 	 */
 	myData mydata = new myData();
 	Configuration conf;
 	ServiceRegistry serviceRegistry;
-	SessionFactory sf;
-	Session sess;
-	Thread sessflush;
 
+	
+	Thread sessflush;
+/*
 	Runnable robj = new Runnable() {
 
 		@Override
@@ -308,18 +314,59 @@ public class vnote implements Filter {
 			}
 		}
 	};
-
+*/
 	public void init(FilterConfig fConfig) throws ServletException {
-		// 持久化数据库
+		
+		// 加载数据库
 		conf = new Configuration().configure();
 		serviceRegistry = new ServiceRegistryBuilder().applySettings(
 				conf.getProperties()).buildServiceRegistry();
-		sf = conf.buildSessionFactory(serviceRegistry);
-		sess = sf.openSession();
+		SessionFactory sf = conf.buildSessionFactory(serviceRegistry);
+		Session sess = sf.openSession();
 
 		mydata = (myData) sess.get(myData.class, 1);
-		sessflush = new Thread(robj);
-
+		//初始化
+		Hibernate.initialize(mydata.getContents());
+		Hibernate.initialize(mydata.getEdited());
+		Hibernate.initialize(mydata.getMod());
+		Hibernate.initialize(mydata.getId());
+		Hibernate.initialize(mydata.getPwd());
+		
+		//sessflush = new Thread(robj);
+		sess.close();
+		sf.close();
+	}
+	public void update(){
+		update(null,null);
+	}
+	public void update(ServletRequest request, ServletResponse response){
+		String result="";
+		 synchronized (mydata) {//加锁
+			 try{
+				 SessionFactory sf = conf.buildSessionFactory(serviceRegistry);
+				 Session sess = sf.openSession();
+				 Transaction tx=sess.beginTransaction();
+				 sess.save(mydata);
+				 tx.commit();
+				 sess.close();
+				 sf.close();
+				 result="数据保存到数据库成功";
+			 }catch(Exception ex){	
+				 result=ex.getMessage();
+				 ex.printStackTrace();
+			 }
+		 }
+		 System.out.println(result);
+			
+		 if(response!=null){
+			 try {
+				response.setCharacterEncoding("utf-8");
+				response.setContentType("text/html;charset=UTF-8");
+				response.getWriter().write(result);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		 }
 	}
 
 }
