@@ -7,8 +7,10 @@
 		//读取文本
 		get();
 		$("#txt").blur(function() {
+			if(edit==1){
 			$.post("ajaxloseedit");
 			$("#editstatus").html("<font color=gray>查看中...</font>");
+		}
 		});
 		$("#txt").on("click", function() {
 			$("#editstatus").html("<font color=green>编辑中...</font>");
@@ -28,11 +30,9 @@
 					}
 				});
 			}
-		});
-
-
-	
+		});	
 	});
+
 	var timer = null;
 	function bindup() {
 
