@@ -71,10 +71,9 @@
 
 		<!--<a href="pwd?mod=0&id=<%=strid%>">编辑模式</a>-->
       <a href="javascript:tobianji()">编辑模式</a>
-	  <a href="javascript:mdfpwd()">修改密码</a>
 	</div>
 
-	<div class="stack " style="display: none;" id="help">
+	<div class="stack " style="display:none;" id="help">
 		<div class="layer_1">
 			<div class="layer_2">
 				<div class="layer_3">

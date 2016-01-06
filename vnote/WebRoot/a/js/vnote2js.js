@@ -77,16 +77,6 @@
 		$("#layer3").html(data);
 		});			
 	}
-	function mdfpwd(){
-
-		$.post("pwd", {
-			id : $("#myid").val(),
-			mod : 0,
-			frm:1 		
-		}, function(data, status) {
-			$("#layer3").html(data);
-		});
-	}
 	
 	window.onunload=function(){
 		//备份到数据库
