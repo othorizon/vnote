@@ -110,20 +110,7 @@ function mdfpwd() {
 		$("#layer3").html(data);
 	});
 }
-function shareit(){
-	$.post("shareurl", {
-		id : $("#myid").val(),
-	},function(data, status){
-		$("#shareurl").show();
-		$("#sharebutton").hide();
-		$("#shareurl").val($("#mybasepath").val()+data);
-		$("#shareurl").focus();$("#shareurl").select();
-	});
-	$("#shareurl").blur(function(){
-		$("#shareurl").hide();
-		$("#sharebutton").show();
-	});
-}
+
 window.onunload = function() {
 	if (edit == 1)
 		$.post("ajaxloseedit");// 释放权限

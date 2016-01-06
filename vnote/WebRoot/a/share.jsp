@@ -23,10 +23,12 @@
 <!--
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
+
 <!-- 加载js和css -->
 <script type="text/javascript" src="<%=basePath%>a/js/jquery-1.9.1.js"></script>
-<script type="text/javascript" src="<%=basePath%>a/js/vnote2js.js"></script>
-<link rel="stylesheet" type="text/css" href="<%=basePath%>a/css/vnote2css.css">
+
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>a/css/vnotecss.css">
 
 </head>
 <body id="body">
@@ -35,29 +37,12 @@
 	<input type="hidden" id="myid" value="${param.id}">
 	<br />
 
-
-
 	<div class="stack ">
-
 		<div class="layer_1">
 			<div class="layer_2">
-
 				<div id="layer3" class="layer_3">
-					<div style="height: 20%">
-						<table style="width: 100%;height: 100%">
-							<tr style="width: 100%;height: 100%">
-								<td style="width: 90%;height: 100%"><textarea id="txt2"
-										class="contents2 " spellcheck="true">输入文本...</textarea></td>
-								<td style="width: 10%;height: 100%;">昵称: <input
-									style="width:55px;" type="text" id="nicheng" value="Guest"><input
-									type="button" style="width: 100%" value="提交" onclick="bindup()"></td>
-							</tr>
-						</table>
-					</div>
-					<div style="height: 80%">
-						<textarea id="txt" class="contents " readonly="readonly"
-							spellcheck="true"></textarea>
-					</div>
+					<textarea id="txt" class="contents " spellcheck="true"
+						readonly="readonly"></textarea>
 				</div>
 			</div>
 		</div>
@@ -67,11 +52,6 @@
 
 		<a href="javascript:AddFavorite()">收藏${param.id}页面</a> <a
 			href="javascript:if($('#help').css('display')=='none') $('#help').show();else $('#help').hide()">帮助与关于</a>
-
-
-		<!--<a href="pwd?mod=0&id=<%=strid%>">编辑模式</a>-->
-      <a href="javascript:tobianji()">编辑模式</a>
-	  <a href="javascript:mdfpwd()">修改密码</a>
 	</div>
 
 	<div class="stack " style="display: none;" id="help">
@@ -81,7 +61,6 @@
 					<textarea class="contents ">
 再次点击页面下方的“帮助与关于”关闭该信息
 =============================				
-
 					</textarea>
 				</div>
 			</div>
@@ -89,4 +68,17 @@
 	</div>
 
 </body>
+<script>
+	$(document).ready(function() {
+		share();
+	});
+	function share() {
+		$.post("shareget", {
+			id : $("#myid").val()
+		}, function(data, status) {
+			$("#txt").val(data);
+			setTimeout(share(), 3000);
+		});
+	}
+</script>
 </html>
