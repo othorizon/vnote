@@ -77,7 +77,18 @@
 		$("#layer3").html(data);
 		});			
 	}
-	
+	function myhelp(){
+		if($('#help').css('display')=='none'){
+			$('#myhelpc').load("a/help.jsp", function(data) {
+				$('#myhelpc').html(data);
+			});
+			$('#help').show();
+		}
+		else {
+			$('#myhelpc').html("");
+			$('#help').hide();
+		}	
+	}
 	window.onunload=function(){
 		//备份到数据库
 		$.post("backup");

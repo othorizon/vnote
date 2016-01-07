@@ -27,7 +27,8 @@
 <!-- 加载js和css -->
 <script type="text/javascript" src="<%=basePath%>a/js/jquery-1.9.1.js"></script>
 <script type="text/javascript" src="<%=basePath%>a/js/vnotejs.js"></script>
-<link rel="stylesheet" type="text/css" href="<%=basePath%>a/css/vnotecss.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>a/css/vnotecss.css">
 
 </head>
 <body id="body">
@@ -50,23 +51,16 @@
 	<div id="controls">
 
 		<a href="javascript:AddFavorite()">收藏${param.id}页面</a> <a
-			href="javascript:if($('#help').css('display')=='none') $('#help').show();else $('#help').hide()">帮助与关于</a>
-		<a href="javascript:tobianji()">只写模式</a>
-		<a href="javascript:mdfpwd()">修改密码</a>
-		<a id="sharebutton" href="javascript:shareit()">分享</a>
-		<input id="shareurl" type="text" style="display: none;">
+			href="javascript:myhelp()">帮助与关于</a> <a href="javascript:tobianji()">只写模式</a>
+		<a href="javascript:mdfpwd()">修改密码</a> <a id="sharebutton"
+			href="javascript:shareit()">分享</a> <input id="shareurl" type="text"
+			style="display: none;">
 	</div>
 
 	<div class="stack " style="display: none;" id="help">
 		<div class="layer_1">
 			<div class="layer_2">
-				<div class="layer_3">
-					<textarea class="contents ">
-再次点击页面下方的“帮助与关于”关闭该信息
-=============================				
-
-					</textarea>
-				</div>
+				<div id="myhelpc" class="layer_3"></div>
 			</div>
 		</div>
 	</div>

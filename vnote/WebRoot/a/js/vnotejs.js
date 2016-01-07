@@ -124,6 +124,18 @@ function shareit(){
 		$("#sharebutton").show();
 	});
 }
+function myhelp(){
+	if($('#help').css('display')=='none'){
+		$('#myhelpc').load("a/help.jsp", function(data) {
+			$('#myhelpc').html(data);
+		});
+		$('#help').show();
+	}
+	else {
+		$('#myhelpc').html("");
+		$('#help').hide();
+	}	
+}
 window.onunload = function() {
 	if (edit == 1)
 		$.post("ajaxloseedit");// 释放权限

@@ -26,7 +26,8 @@
 <!-- 加载js和css -->
 <script type="text/javascript" src="<%=basePath%>a/js/jquery-1.9.1.js"></script>
 <script type="text/javascript" src="<%=basePath%>a/js/vnote2js.js"></script>
-<link rel="stylesheet" type="text/css" href="<%=basePath%>a/css/vnote2css.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>a/css/vnote2css.css">
 
 </head>
 <body id="body">
@@ -66,23 +67,17 @@
 	<div id="controls">
 
 		<a href="javascript:AddFavorite()">收藏${param.id}页面</a> <a
-			href="javascript:if($('#help').css('display')=='none') $('#help').show();else $('#help').hide()">帮助与关于</a>
+			href="javascript:myhelp()">帮助与关于</a>
 
 
 		<!--<a href="pwd?mod=0&id=<%=strid%>">编辑模式</a>-->
-      <a href="javascript:tobianji()">编辑模式</a>
+		<a href="javascript:tobianji()">编辑模式</a>
 	</div>
 
 	<div class="stack " style="display:none;" id="help">
 		<div class="layer_1">
 			<div class="layer_2">
-				<div class="layer_3">
-					<textarea class="contents ">
-再次点击页面下方的“帮助与关于”关闭该信息
-=============================				
-
-					</textarea>
-				</div>
+				<div id="myhelpc" class="layer_3"></div>
 			</div>
 		</div>
 	</div>
