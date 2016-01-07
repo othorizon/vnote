@@ -1,45 +1,29 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
-<%
-	String path = request.getContextPath();
-	String basePath = request.getScheme() + "://"
-			+ request.getServerName() + ":" + request.getServerPort()
-			+ path + "/";
-%>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<head>
-<base href="<%=basePath%>">
-
-<title>My JSP 'help.jsp' starting page</title>
-
-<meta http-equiv="pragma" content="no-cache">
-<meta http-equiv="cache-control" content="no-cache">
-<meta http-equiv="expires" content="0">
-<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-<meta http-equiv="description" content="This is my page">
-<!--
-	<link rel="stylesheet" type="text/css" href="styles.css">
-	-->
-
-</head>
-
 <body>
-<table style="width:100%">
-<tr style="width:100%">
-<td style="width:50%">
-	<iframe height=498 width=510
-	src="http://player.youku.com/embed/XMTQzODE4MDM4MA==" frameborder=0
-	allowfullscreen>
-	</iframe>
-</td>
-<td style="width:50%">
-<textarea readonly="readonly" class="contents ">
-使用教程，看左侧视频。
-</textarea>
-</td>
-</tr>
-</table>
+	<table style="width:100%;height: 100%">
+		<tr style="width:100%;height: 100%">
+			<td style="width:70%"><embed
+					src="http://www.tudou.com/v/USDVEomdMgo/&bid=05&rpid=48161132&resourceId=48161132_05_05_99/v.swf&autoPlay=true"
+					type="application/x-shockwave-flash" allowscriptaccess="always"
+					allowfullscreen="true" wmode="opaque" width="100%" height="100%"></embed>
+			</td>
+			<td style="width:30%;height: 100%">
+			<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=492422846&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:492422846:51" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
+			<textarea readonly="readonly"
+					class="contents " style="color: red;">
+再次点击“帮助与关于”关闭帮助页面。
+网站的使用教程，请看左侧视频。
+网站处于测试阶段，请不要在这里保存你的个人隐私和重要数据，因为数据真的有可能会被我调皮清空的。。。。
 
-  </body>
+
+有任何疑问与兴趣欢迎联系我哦。
+开发者QQ：点击上方的“QQ交谈”按钮就好啦~
+
+最后，谢谢您的关注~
+</textarea></td>
+		</tr>
+	</table>
+
+</body>
 </html>
